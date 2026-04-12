@@ -13,6 +13,8 @@ public class TetrisWorld {
     private Color[][] colorData;
     private Random random;
     private boolean isGameOver = false;
+    private boolean isPaused = false;
+    private TetrominoType nextTetrominoType;
 
     private boolean isTimeToAnimate;
     private Map<Integer, Color[]> animationColors;
@@ -26,12 +28,16 @@ public class TetrisWorld {
         colorData = new Color[30][15];
         animationColors = new HashMap<>();
 
+        nextTetrominoType = generateRandomTetromino();
+
         Tetromino tetromino3 = new Tetromino(300, 200, TetrominoType.I, true, this);
         tetrominoList.add(tetromino3);
     }
 
     public void update() {
         if (isGameOver) return;
+        if (isPaused) return;
+
         if (!isTimeToAnimate) {
             Iterator<Tetromino> tetrominoIterator = tetrominoList.iterator();
             while (tetrominoIterator.hasNext()) {
@@ -44,14 +50,21 @@ public class TetrisWorld {
                 }
             }
             if (tetrominoList.isEmpty()) {
-                TetrominoType newType = generateRandomTetromino();
 
-                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, 100, newType)) {
-                    isGameOver = true;   // SET GAME OVER
+                // 1. current piece comes from next
+                TetrominoType currentType = nextTetrominoType;
+
+                // 2. generate NEW next piece
+                nextTetrominoType = generateRandomTetromino();
+
+                // 3. game over check
+                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, 100, currentType)) {
+                    isGameOver = true;
                     return;
                 }
 
-                tetrominoList.add(new Tetromino(260, 100, newType, true, this));
+                // 4. spawn current piece
+                tetrominoList.add(new Tetromino(260, 100, currentType, true, this));
             }
 
             int removedRows = checkAndRemoveFullRows();
@@ -60,6 +73,18 @@ public class TetrisWorld {
                 isTimeToAnimate = true;
             }
         }
+    }
+
+    public TetrominoType getNextTetrominoType() {
+        return nextTetrominoType;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void togglePause() {
+        isPaused = !isPaused;
     }
 
     private int checkAndRemoveFullRows() {
@@ -206,10 +231,15 @@ public class TetrisWorld {
             }
         }
         if (isGameOver) {
-            g.setColor(Color.WHITE);
+            g.setColor(Color.YELLOW);
             g.setFont(new Font("Arial", Font.BOLD, 30));
             g.drawString("GAME OVER", 180, 350);
             g.drawString("Press R to Restart", 170, 400);
+        }
+        if (isPaused) {
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("PAUSED", 200, 300);
         }
     }
 

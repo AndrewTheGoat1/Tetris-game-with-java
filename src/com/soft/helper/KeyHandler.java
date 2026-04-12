@@ -20,6 +20,16 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        // allow pause key always
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            gameWindow.getTetrisWorld().togglePause();
+            return;
+        }
+
+        // ❌ block all other keys when paused
+        if (gameWindow.getTetrisWorld().isPaused()) return;
+
         switch (e.getKeyCode()){
             case KeyEvent.VK_LEFT -> gameWindow.getTetrisWorld().setLeft(true);
             case KeyEvent.VK_RIGHT -> gameWindow.getTetrisWorld().setRight(true);
@@ -30,6 +40,7 @@ public class KeyHandler implements KeyListener {
                     gameWindow.restartGame();
                 }
             }
+            case KeyEvent.VK_P -> gameWindow.getTetrisWorld().togglePause();
         }
     }
 

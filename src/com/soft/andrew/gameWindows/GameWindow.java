@@ -1,5 +1,6 @@
 package com.soft.andrew.gameWindows;
 
+import com.soft.andrew.entity.TetrominoType;
 import com.soft.helper.KeyHandler;
 
 import java.awt.*;
@@ -101,6 +102,24 @@ public class GameWindow implements Runnable {
         graphics.setColor(Color.WHITE);
         graphics.drawRect(450,100, 150, 100);
         graphics.drawString("Next : ", 460, 120);
+
+        TetrominoType next = tetrisWorld.getNextTetrominoType();
+        int[][] data = next.getTetrominoData();
+
+        int startX = 480; // position inside box
+        int startY = 140;
+
+        for (int y = 0; y < data.length; y++){
+            for (int x = 0; x < data[y].length; x++){
+                if (data[y][x] == 1){
+                    graphics.setColor(next.getColor());
+                    graphics.fillRect(startX + (x * 20), startY + (y * 20), 20, 20);
+
+                    graphics.setColor(Color.WHITE);
+                    graphics.drawRect(startX + (x * 20), startY + (y * 20), 19, 19);
+                }
+            }
+        }
     }
 
     public void drawScorePane(Graphics graphics){
