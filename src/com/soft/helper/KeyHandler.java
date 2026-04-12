@@ -25,6 +25,11 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_RIGHT -> gameWindow.getTetrisWorld().setRight(true);
             case KeyEvent.VK_UP -> gameWindow.getTetrisWorld().switchShape();
             case KeyEvent.VK_DOWN -> gameWindow.getTetrisWorld().setDown(true);
+            case KeyEvent.VK_R -> {
+                if (gameWindow.getTetrisWorld().isGameOver()) {
+                    gameWindow.restartGame();
+                }
+            }
         }
     }
 

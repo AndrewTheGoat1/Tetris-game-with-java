@@ -12,10 +12,12 @@ public class TetrisWorld {
     private int[][] collisionData;
     private Color[][] colorData;
     private Random random;
+    private boolean isGameOver = false;
 
     private boolean isTimeToAnimate;
     private Map<Integer, Color[]> animationColors;
     private int animationBlockSize = 20;
+    private int score = 0;
 
     public TetrisWorld() {
         random = new Random();
@@ -29,6 +31,7 @@ public class TetrisWorld {
     }
 
     public void update() {
+        if (isGameOver) return;
         if (!isTimeToAnimate) {
             Iterator<Tetromino> tetrominoIterator = tetrominoList.iterator();
             while (tetrominoIterator.hasNext()) {
@@ -41,11 +44,19 @@ public class TetrisWorld {
                 }
             }
             if (tetrominoList.isEmpty()) {
-                tetrominoList.add(new Tetromino(260, 100, generateRandomTetromino(), true, this));
+                TetrominoType newType = generateRandomTetromino();
+
+                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, 100, newType)) {
+                    isGameOver = true;   // SET GAME OVER
+                    return;
+                }
+
+                tetrominoList.add(new Tetromino(260, 100, newType, true, this));
             }
 
             int removedRows = checkAndRemoveFullRows();
             if (removedRows > 0) {
+                addScore(removedRows);
                 isTimeToAnimate = true;
             }
         }
@@ -87,6 +98,15 @@ public class TetrisWorld {
             }
         }
         return true;
+    }
+
+    private void addScore(int rows) {
+        switch (rows) {
+            case 1 -> score += 100;
+            case 2 -> score += 300;
+            case 3 -> score += 500;
+            case 4 -> score += 800;
+        }
     }
 
     private void addToCollisionData(int[][] tetrominoData, int x, int y, TetrominoType tetrominoType) {
@@ -185,6 +205,20 @@ public class TetrisWorld {
                 animationBlockSize = 20;
             }
         }
+        if (isGameOver) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("GAME OVER", 180, 350);
+            g.drawString("Press R to Restart", 170, 400);
+        }
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
     }
 
     public void setLeft(boolean status) {

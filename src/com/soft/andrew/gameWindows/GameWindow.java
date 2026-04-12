@@ -93,6 +93,10 @@ public class GameWindow implements Runnable {
 
     }
 
+    public void restartGame() {
+        tetrisWorld = new TetrisWorld();
+    }
+
     public void drawNextBlock(Graphics graphics){
         graphics.setColor(Color.WHITE);
         graphics.drawRect(450,100, 150, 100);
@@ -103,6 +107,8 @@ public class GameWindow implements Runnable {
         graphics.setColor(Color.WHITE);
         graphics.drawRect(450,250, 150, 100);
         graphics.drawString("Score : ", 460, 270);
+
+        graphics.drawString(String.valueOf(tetrisWorld.getScore()), 460, 300);
     }
 
     public void drawHighestScorePane(Graphics graphics){
