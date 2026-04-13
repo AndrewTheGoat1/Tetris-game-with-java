@@ -5,6 +5,7 @@ import com.soft.andrew.entity.TetrominoType;
 
 import java.awt.*;
 import java.util.*;
+import java.io.*; // for highest high score save file
 import java.util.List;
 
 public class TetrisWorld {
@@ -15,11 +16,13 @@ public class TetrisWorld {
     private boolean isGameOver = false;
     private boolean isPaused = false;
     private TetrominoType nextTetrominoType;
+    private final String FILE_NAME = "highscore.txt";
 
     private boolean isTimeToAnimate;
     private Map<Integer, Color[]> animationColors;
     private int animationBlockSize = 20;
     private int score = 0;
+    private int highScore = 0;
 
     public TetrisWorld() {
         random = new Random();
@@ -27,6 +30,8 @@ public class TetrisWorld {
         collisionData = new int[30][15];
         colorData = new Color[30][15];
         animationColors = new HashMap<>();
+
+        loadHighScore();
 
         nextTetrominoType = generateRandomTetromino();
 
@@ -57,14 +62,17 @@ public class TetrisWorld {
                 // 2. generate NEW next piece
                 nextTetrominoType = generateRandomTetromino();
 
-                // 3. game over check
-                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, 100, currentType)) {
+                // 3. adjust spawn Y using offset
+                int spawnY = 100 - currentType.getOffSetYU();
+
+                // 4. game over check
+                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, spawnY, currentType)) {
                     isGameOver = true;
                     return;
                 }
 
-                // 4. spawn current piece
-                tetrominoList.add(new Tetromino(260, 100, currentType, true, this));
+                // 5. spawn current piece
+                tetrominoList.add(new Tetromino(260, spawnY, currentType, true, this));
             }
 
             int removedRows = checkAndRemoveFullRows();
@@ -131,6 +139,30 @@ public class TetrisWorld {
             case 2 -> score += 300;
             case 3 -> score += 500;
             case 4 -> score += 800;
+        }
+        if (score > highScore) {
+            highScore = score;
+            saveHighScore();
+        }
+    }
+
+    public int getHighScore() {
+        return highScore;
+    }
+
+    private void saveHighScore() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            bw.write(String.valueOf(highScore));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadHighScore() {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
+            highScore = Integer.parseInt(br.readLine());
+        } catch (Exception e) {
+            highScore = 0; // if file not found
         }
     }
 

@@ -78,6 +78,7 @@ public class GameWindow implements Runnable {
         drawNextBlock(graphics);
         drawScorePane(graphics);
         drawHighestScorePane(graphics);
+        drawHints(graphics);
         tetrisWorld.render(graphics);
     }
 
@@ -100,7 +101,7 @@ public class GameWindow implements Runnable {
 
     public void drawNextBlock(Graphics graphics){
         graphics.setColor(Color.WHITE);
-        graphics.drawRect(450,100, 150, 100);
+        graphics.drawRect(450,100, 150, 120);
         graphics.drawString("Next : ", 460, 120);
 
         TetrominoType next = tetrisWorld.getNextTetrominoType();
@@ -134,6 +135,22 @@ public class GameWindow implements Runnable {
         graphics.setColor(Color.WHITE);
         graphics.drawRect(450,400, 150, 100);
         graphics.drawString("Highest Score : ", 460, 420);
+
+        graphics.drawString(String.valueOf(tetrisWorld.getHighScore()), 460, 450);
+    }
+
+    public void drawHints(Graphics graphics) {
+        graphics.setColor(Color.LIGHT_GRAY);
+        graphics.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        int x = 450;
+        int y = 550;
+
+        graphics.drawString("Controls:", x, y);
+        graphics.drawString("← → : Move", x, y + 15);
+        graphics.drawString("↑ : Rotate", x, y + 30);
+        graphics.drawString("↓ : Soft Drop", x, y + 45);
+        graphics.drawString("P : Pause", x, y + 60);
     }
 
     public void drawFpsTracker(Graphics graphics){
