@@ -23,6 +23,8 @@ public class TetrisWorld {
     private int animationBlockSize = 20;
     private int score = 0;
     private int highScore = 0;
+    private int level = 1;
+    private int totalLinesCleared = 0;
 
     public TetrisWorld() {
         random = new Random();
@@ -63,24 +65,73 @@ public class TetrisWorld {
                 nextTetrominoType = generateRandomTetromino();
 
                 // 3. adjust spawn Y using offset
+                int spawnX = 260;
                 int spawnY = 100 - currentType.getOffSetYU();
 
+
                 // 4. game over check
-                if (!com.soft.helper.CollisionHelper.canMove(collisionData, 260, spawnY, currentType)) {
+                if (isGameOverAtSpawn(currentType, spawnX, spawnY)) {
                     isGameOver = true;
                     return;
                 }
 
                 // 5. spawn current piece
-                tetrominoList.add(new Tetromino(260, spawnY, currentType, true, this));
+                tetrominoList.add(new Tetromino(spawnX, spawnY, currentType, true, this));
             }
 
             int removedRows = checkAndRemoveFullRows();
             if (removedRows > 0) {
+                totalLinesCleared += removedRows;   // track lines
                 addScore(removedRows);
+                updateLevel();
                 isTimeToAnimate = true;
             }
         }
+    }
+
+    private boolean isGameOverAtSpawn(TetrominoType type, int x, int y) {
+
+        int[][] data = type.getTetrominoData();
+
+        for (int j = 0; j < data.length; j++) {
+            for (int i = 0; i < data[j].length; i++) {
+
+                if (data[j][i] == 1) {
+
+                    int gridX = (x - 100 + (i * 20)) / 20;
+                    int gridY = (y - 100 + (j * 20)) / 20;
+
+                    //  outside or occupied = game over
+                    if (gridX < 0 || gridX >= collisionData[0].length ||
+                            gridY < 0 || gridY >= collisionData.length) {
+                        return true;
+                    }
+
+                    if (collisionData[gridY][gridX] == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void updateLevel() {
+        level = (totalLinesCleared / 10) + 1; // every 10 lines = new level
+        updateSpeed();
+    }
+
+    private void updateSpeed() {
+        int newSpeed = Math.max(5, 20 - (level - 1) * 2);
+
+        for (Tetromino t : tetrominoList) {
+            t.setDownSpeed(newSpeed);
+        }
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public TetrominoType getNextTetrominoType() {

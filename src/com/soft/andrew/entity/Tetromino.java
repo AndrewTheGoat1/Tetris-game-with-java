@@ -112,6 +112,10 @@ public class Tetromino {
         //tetrominoType = tetrominoType.next();
     }
 
+    public void setDownSpeed(int downSpeed) {
+        this.downSpeed = downSpeed;
+    }
+
     public void render(Graphics g){
         int[][] tetrominoData = tetrominoType.getTetrominoData();
         for (int deltaY = 0; deltaY < tetrominoData.length ; deltaY++){
