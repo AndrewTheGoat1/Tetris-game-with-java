@@ -47,9 +47,6 @@ public class TetrisWorld {
         loadHighScore();
 
         nextTetrominoType = generateRandomTetromino();
-
-        Tetromino tetromino3 = new Tetromino(300, 200, TetrominoType.I, true, this);
-        tetrominoList.add(tetromino3);
     }
 
     public void update() {
