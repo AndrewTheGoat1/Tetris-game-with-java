@@ -9,6 +9,13 @@ import java.io.*; // for highest high score save file
 import java.util.List;
 
 public class TetrisWorld {
+    private enum GameState {
+        MENU,
+        PLAYING,
+        GAME_OVER
+    }
+
+    private GameState gameState = GameState.MENU;
     private List<Tetromino> tetrominoList;
     private int[][] collisionData;
     private Color[][] colorData;
@@ -46,8 +53,8 @@ public class TetrisWorld {
     }
 
     public void update() {
-        if (isGameOver) return;
-        if (isPaused) return;
+        if (gameState != GameState.PLAYING) return;
+        if (isGameOver || isPaused) return;
 
         if (!isTimeToAnimate) {
             Iterator<Tetromino> tetrominoIterator = tetrominoList.iterator();
@@ -91,6 +98,25 @@ public class TetrisWorld {
                 isTimeToAnimate = true;
             }
         }
+    }
+
+    public void startGame() {
+        gameState = GameState.PLAYING;
+    }
+
+    private void drawMenu(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 40));
+        g.drawString("TETRIS", 180, 200);
+
+        g.setFont(new Font("Arial", Font.PLAIN, 25));
+        g.drawString("Click PLAY to start", 150, 300);
+
+        g.setColor(Color.GREEN);
+        g.fillRect(200, 350, 120, 50);
+
+        g.setColor(Color.BLACK);
+        g.drawString("PLAY", 230, 385);
     }
 
     private boolean isGameOverAtSpawn(TetrominoType type, int x, int y) {
@@ -275,6 +301,10 @@ public class TetrisWorld {
 
 
     public void render(Graphics g) {
+        if (gameState == GameState.MENU) {
+            drawMenu(g);
+            return;
+        }
         // 1. DRAW PLACED BLOCKS FIRST
         for (int deltaY = 0; deltaY < collisionData.length; deltaY++) {
             for (int deltaX = 0; deltaX < collisionData[deltaY].length; deltaX++) {
