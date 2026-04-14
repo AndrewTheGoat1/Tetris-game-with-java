@@ -41,6 +41,9 @@ public class KeyHandler implements KeyListener {
                 }
             }
             case KeyEvent.VK_P -> gameWindow.getTetrisWorld().togglePause();
+            case KeyEvent.VK_SPACE -> {
+                gameWindow.getTetrisWorld().hardDrop();
+            }
         }
     }
 

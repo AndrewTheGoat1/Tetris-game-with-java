@@ -175,6 +175,7 @@ public class GameWindow implements Runnable {
         g.drawString("↑ Rotate", x + 10, y + 55);
         g.drawString("↓ Drop", x + 10, y + 70);
         g.drawString("P Pause", x + 10, y + 85);
+        g.drawString("Space Hard drop", x + 10, y + 100);
     }
 
     public void drawFpsTracker(Graphics graphics){

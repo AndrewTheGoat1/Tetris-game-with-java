@@ -358,6 +358,14 @@ public class TetrisWorld {
         }
     }
 
+    public void hardDrop() {
+        for (Tetromino t : tetrominoList) {
+            if (t.isActive()) {
+                t.setHardDropping(true);
+            }
+        }
+    }
+
     public int getScore() {
         return score;
     }

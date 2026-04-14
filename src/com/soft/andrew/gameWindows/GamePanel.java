@@ -18,7 +18,8 @@ public class GamePanel extends JPanel {
         this.gameWindow = gameWindow;
         setPreferredSize(new Dimension(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
         setBackground(new Color(15, 15, 15));
-
+        setFocusable(true);
+        requestFocusInWindow();
         addKeyListener(new KeyHandler(gameWindow));
         MouseHandler mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);

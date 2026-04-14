@@ -18,6 +18,7 @@ public class Tetromino {
     private int leftRightUpdateCount;
     private boolean isActive;
     private boolean left,right,up,down;
+    private boolean isHardDropping = false;
 
     public Tetromino(int x, int y, TetrominoType tetrominoType, boolean isActive, TetrisWorld tetrisWorld){
         this.tetrisWorld = tetrisWorld;
@@ -36,14 +37,19 @@ public class Tetromino {
             leftRightUpdateCount++;
         }
 
-        if (updateCount > downSpeed){
-            if (canMove(tetrisWorld.getCollisionData(),x,y + 20,tetrominoType)) {
-                y+= 20;
-            }else {
+        int speed = isHardDropping ? 2 : downSpeed;
+
+        if (updateCount >= speed) {
+
+            if (canMove(tetrisWorld.getCollisionData(), x, y + 20, tetrominoType)) {
+                y += 20;
+            } else {
                 isActive = false;
+                isHardDropping = false;
             }
-            updateCount=0;
-        }else {
+
+            updateCount = 0;
+        } else {
             updateCount++;
         }
 
@@ -127,6 +133,10 @@ public class Tetromino {
         this.downSpeed = downSpeed;
     }
 
+    public void setHardDropping(boolean hardDropping) {
+        this.isHardDropping = hardDropping;
+    }
+
     public void render(Graphics g){
         if (!isActive) return;
         Graphics2D g2 = (Graphics2D) g;
@@ -174,6 +184,14 @@ public class Tetromino {
                 }
             }
         }
+    }
+
+    //hard drop
+    public void setY(int y) {
+        this.y = y;
+    }
+    public void setActive(boolean active) {
+        this.isActive = active;
     }
 
     public void setLeft(boolean left) {
