@@ -112,20 +112,65 @@ public class Tetromino {
         //tetrominoType = tetrominoType.next();
     }
 
+    //Ghost Piece
+    public int getGhostY() {
+        int ghostY = y;
+
+        while (canMove(tetrisWorld.getCollisionData(), x, ghostY + 20, tetrominoType)) {
+            ghostY += 20;
+        }
+
+        return ghostY;
+    }
+
     public void setDownSpeed(int downSpeed) {
         this.downSpeed = downSpeed;
     }
 
     public void render(Graphics g){
+        if (!isActive) return;
+        Graphics2D g2 = (Graphics2D) g;
         int[][] tetrominoData = tetrominoType.getTetrominoData();
+        // Draw GHOST first
+        int ghostY = getGhostY();
+
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+        for (int deltaY = 0; deltaY < tetrominoData.length; deltaY++){
+            for (int deltaX = 0; deltaX < tetrominoData[deltaY].length; deltaX++){
+                if (tetrominoData[deltaY][deltaX] == 1){
+                    g2.setColor(tetrominoType.getColor());
+                    g2.fillRect(
+                            x + (deltaX * blockWidth),
+                            ghostY + (deltaY * blockHeight),
+                            blockWidth,
+                            blockHeight
+                    );
+                }
+            }
+        }
+        // restore opacity
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+        // 🧱 2. DRAW REAL PIECE (NORMAL)
         for (int deltaY = 0; deltaY < tetrominoData.length ; deltaY++){
             for (int deltaX = 0; deltaX < tetrominoData[deltaY].length ; deltaX++){
                 if (tetrominoData[deltaY][deltaX] == 1){
                     g.setColor(tetrominoType.getColor());
-                    g.fillRect(x+(deltaX * blockWidth),y+(deltaY * blockHeight),blockWidth,blockHeight);
+                    g.fillRect(
+                            x + (deltaX * blockWidth),
+                            y + (deltaY * blockHeight),
+                            blockWidth,
+                            blockHeight
+                    );
+
                     g.setColor(Color.WHITE);
-                    g.drawRect(x+(deltaX * blockWidth),y+(deltaY * blockHeight),blockWidth-1,blockHeight-1);
-                    //g.drawRect(x,y,blockWidth*4,blockHeight*4);
+                    g.drawRect(
+                            x + (deltaX * blockWidth),
+                            y + (deltaY * blockHeight),
+                            blockWidth - 1,
+                            blockHeight - 1
+                    );
                 }
             }
         }

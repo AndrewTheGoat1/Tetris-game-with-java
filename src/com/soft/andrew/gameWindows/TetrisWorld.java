@@ -275,10 +275,7 @@ public class TetrisWorld {
 
 
     public void render(Graphics g) {
-        for (Tetromino t : tetrominoList) {
-            t.render(g);
-        }
-
+        // 1. DRAW PLACED BLOCKS FIRST
         for (int deltaY = 0; deltaY < collisionData.length; deltaY++) {
             for (int deltaX = 0; deltaX < collisionData[deltaY].length; deltaX++) {
 
@@ -294,6 +291,10 @@ public class TetrisWorld {
             }
         }
 
+        // 2. DRAW ACTIVE PIECE (with ghost)
+        for (Tetromino t : tetrominoList) {
+            t.render(g);
+        }
         if (isTimeToAnimate) {
             //System.out.println("Is Time to animate");
 
@@ -302,6 +303,7 @@ public class TetrisWorld {
                 //System.out.println("Key : " + key);
                 for (int x = 0; x < entry.getValue().length; x++) {
                     //System.out.println("X :" + x + "Color : " + entry.getValue()[x]);
+                    if (entry.getValue()[x] == null) continue;
                     g.setColor(entry.getValue()[x]);
 
                     //Animation
