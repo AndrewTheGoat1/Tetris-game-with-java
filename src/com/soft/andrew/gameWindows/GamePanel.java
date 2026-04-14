@@ -17,7 +17,7 @@ public class GamePanel extends JPanel {
     public GamePanel(GameWindow gameWindow){
         this.gameWindow = gameWindow;
         setPreferredSize(new Dimension(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT));
-        setBackground(Color.BLACK);
+        setBackground(new Color(15, 15, 15));
 
         addKeyListener(new KeyHandler(gameWindow));
         MouseHandler mouseHandler = new MouseHandler();

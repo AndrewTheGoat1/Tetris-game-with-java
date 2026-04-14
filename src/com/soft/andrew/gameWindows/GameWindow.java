@@ -16,6 +16,12 @@ public class GameWindow implements Runnable {
     private int fpsTracker = 0;
     private TetrisWorld tetrisWorld;
 
+    //UI Color
+    private final Color PANEL_BG = new Color(30, 30, 30);
+    private final Color PANEL_BORDER = new Color(70, 70, 70);
+    private final Color TEXT_MAIN = Color.WHITE;
+    private final Color TEXT_ACCENT = new Color(0, 200, 255);
+
     public GameWindow(){
         initTetrisWorld();
         gamePanel = new GamePanel(this);
@@ -72,6 +78,12 @@ public class GameWindow implements Runnable {
     }
 
     public void render(Graphics g){
+        //Smooth Font
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+
         drawFpsTracker(g);
         drawGrids(g);
 
@@ -102,73 +114,67 @@ public class GameWindow implements Runnable {
     }
 
     public void drawNextBlock(Graphics g){
-        int x = 450;
-        int y = 100;
+        int x = 450, y = 100;
 
-        g.setColor(Color.WHITE);
-        g.drawRect(x, y, 150, 120);
-        g.drawString("Next", x + 10, y + 20);
+        drawPanel(g, x, y, 150, 120, "NEXT");
 
         TetrominoType next = tetrisWorld.getNextTetrominoType();
         int[][] data = next.getTetrominoData();
 
-        int startX = x + 40;
-        int startY = y + 30;
+        int startX = x + 45;
+        int startY = y + 35;
 
         for (int i = 0; i < data.length; i++){
             for (int j = 0; j < data[i].length; j++){
                 if (data[i][j] == 1){
                     g.setColor(next.getColor());
-                    g.fillRect(startX + j * 20, startY + i * 20, 20, 20);
-                    g.setColor(Color.WHITE);
-                    g.drawRect(startX + j * 20, startY + i * 20, 19, 19);
+                    g.fillRect(startX + j * 18, startY + i * 18, 18, 18);
                 }
             }
         }
     }
 
     public void drawScorePane(Graphics g){
-        int x = 450;
-        int y = 240;
+        int x = 450, y = 240;
 
-        g.setColor(Color.WHITE);
-        g.drawRect(x, y, 150, 80);
-        g.drawString("Score", x + 10, y + 20);
-        g.drawString(String.valueOf(tetrisWorld.getScore()), x + 10, y + 50);
+        drawPanel(g, x, y, 150, 90, "SCORE");
+
+        g.setColor(TEXT_MAIN);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString(String.valueOf(tetrisWorld.getScore()), x + 10, y + 60);
     }
 
     public void drawHighestScorePane(Graphics g){
-        int x = 450;
-        int y = 340;
+        int x = 450, y = 350;
 
-        g.setColor(Color.WHITE);
-        g.drawRect(x, y, 150, 80);
-        g.drawString("High Score", x + 10, y + 20);
-        g.drawString(String.valueOf(tetrisWorld.getHighScore()), x + 10, y + 50);
+        drawPanel(g, x, y, 150, 90, "HIGH SCORE");
+
+        g.setColor(TEXT_MAIN);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString(String.valueOf(tetrisWorld.getHighScore()), x + 10, y + 60);
     }
 
+    public void drawLevelPane(Graphics g){
+        int x = 450, y = 460;
+
+        drawPanel(g, x, y, 150, 80, "LEVEL");
+
+        g.setColor(TEXT_MAIN);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString(String.valueOf(tetrisWorld.getLevel()), x + 10, y + 55);
+    }
     public void drawHints(Graphics g){
-        int x = 450;
-        int y = 540;
+        int x = 450, y = 560;
 
-        g.setColor(Color.WHITE);
-        g.drawRect(x, y, 150, 100);
+        drawPanel(g, x, y, 150, 140, "CONTROLS");
 
-        g.drawString("Controls", x + 10, y + 20);
+        g.setColor(TEXT_MAIN);
+        g.setFont(new Font("Arial", Font.PLAIN, 12));
+
         g.drawString("← → Move", x + 10, y + 40);
         g.drawString("↑ Rotate", x + 10, y + 55);
         g.drawString("↓ Drop", x + 10, y + 70);
         g.drawString("P Pause", x + 10, y + 85);
-    }
-
-    public void drawLevelPane(Graphics g){
-        int x = 450;
-        int y = 440;
-
-        g.setColor(Color.WHITE);
-        g.drawRect(x, y, 150, 80);
-        g.drawString("Level", x + 10, y + 20);
-        g.drawString(String.valueOf(tetrisWorld.getLevel()), x + 10, y + 50);
     }
 
     public void drawFpsTracker(Graphics graphics){
@@ -178,6 +184,21 @@ public class GameWindow implements Runnable {
 
     public TetrisWorld getTetrisWorld(){
         return tetrisWorld;
+    }
+
+    private void drawPanel(Graphics g, int x, int y, int w, int h, String title) {
+        // background
+        g.setColor(PANEL_BG);
+        g.fillRect(x, y, w, h);
+
+        // border
+        g.setColor(PANEL_BORDER);
+        g.drawRect(x, y, w, h);
+
+        // title
+        g.setColor(TEXT_ACCENT);
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        g.drawString(title, x + 10, y + 20);
     }
 
 }

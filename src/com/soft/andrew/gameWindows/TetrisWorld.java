@@ -26,6 +26,10 @@ public class TetrisWorld {
     private int level = 1;
     private int totalLinesCleared = 0;
 
+    //animated line clear
+    private int animationFrame = 0;
+    private final int MAX_ANIMATION_FRAME = 10;
+
     public TetrisWorld() {
         random = new Random();
         tetrominoList = new ArrayList<>();
@@ -299,18 +303,44 @@ public class TetrisWorld {
                 for (int x = 0; x < entry.getValue().length; x++) {
                     //System.out.println("X :" + x + "Color : " + entry.getValue()[x]);
                     g.setColor(entry.getValue()[x]);
-                    g.fillRect(100 + x * 20, key * 20 + 100, animationBlockSize, animationBlockSize);
+
+                    //Animation
+                    int drawX = 100 + x * 20;
+                    int drawY = key * 20 + 100;
+
+                    // Fade effect
+                    int alpha = 255 - (animationFrame * 20);
+                    alpha = Math.max(0, alpha);
+
+                    // Flash effect (white blink)
+                    if (animationFrame < 3) {
+                        g.setColor(Color.WHITE);
+                    } else {
+                        Color base = entry.getValue()[x];
+                        if (base != null) {
+                            g.setColor(new Color(base.getRed(), base.getGreen(), base.getBlue(), alpha));
+                        }
+                    }
+
+                    // slight shrink effect
+                    int size = 20 - animationFrame;
+                    size = Math.max(5, size);
+
+                    int offset = (20 - size) / 2;
+
+                    g.fillRect(drawX + offset, drawY + offset, size, size);
                 }
             }
 
-            animationBlockSize--;
-            if (animationBlockSize <= 0) {
+            animationFrame++;
+
+            if (animationFrame >= MAX_ANIMATION_FRAME) {
                 for (Integer key : animationColors.keySet()) {
                     shiftRowDown(key);
                 }
-                animationColors = new HashMap<>();
+                animationColors.clear();
                 isTimeToAnimate = false;
-                animationBlockSize = 20;
+                animationFrame = 0;
             }
         }
         if (isGameOver) {
