@@ -2,6 +2,7 @@ package com.soft.andrew.gameWindows;
 
 import com.soft.andrew.entity.Tetromino;
 import com.soft.andrew.entity.TetrominoType;
+import com.soft.helper.SoundPlayer;
 
 import java.awt.*;
 import java.util.*;
@@ -80,6 +81,7 @@ public class TetrisWorld {
                 // 4. game over check
                 if (isGameOverAtSpawn(currentType, spawnX, spawnY)) {
                     isGameOver = true;
+                    SoundPlayer.play("gameover");
                     return;
                 }
 

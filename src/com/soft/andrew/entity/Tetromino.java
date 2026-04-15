@@ -53,7 +53,7 @@ public class Tetromino {
             updateCount++;
         }
 
-        checkBoundaries();
+        //checkBoundaries();
     }
 
     private void checkBoundaries(){
@@ -110,12 +110,36 @@ public class Tetromino {
         return canMove(tetrisWorld.getCollisionData(), x, y + 20, tetrominoType);
     }
 
-    public void switchShape(){
+    public void switchShape() {
         TetrominoType nextType = tetrominoType.next();
-        if(canMove(tetrisWorld.getCollisionData(),x,y,tetrominoType)){
-            tetrominoType = nextType;
+
+        int[][] collision = tetrisWorld.getCollisionData();
+
+        // Standard SRS-like kick table (simplified)
+        int[][] kicks = {
+                {0, 0},     // normal rotation
+                {-20, 0},   // left
+                {20, 0},    // right
+                {-40, 0},   // double left
+                {40, 0},    // double right
+                {0, -20},   // up
+                {-20, -20}, // up-left
+                {20, -20}   // up-right
+        };
+
+        for (int[] kick : kicks) {
+            int testX = x + kick[0];
+            int testY = y + kick[1];
+
+            if (canMove(collision, testX, testY, nextType)) {
+                x = testX;
+                y = testY;
+                tetrominoType = nextType;
+                return; // SUCCESS
+            }
         }
-        //tetrominoType = tetrominoType.next();
+
+        // if all fail → do nothing
     }
 
     //Ghost Piece

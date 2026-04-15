@@ -2,6 +2,7 @@ package com.soft.andrew.gameWindows;
 
 import com.soft.andrew.entity.TetrominoType;
 import com.soft.helper.KeyHandler;
+import com.soft.helper.SoundPlayer;
 
 import java.awt.*;
 
@@ -28,6 +29,7 @@ public class GameWindow implements Runnable {
         gameFrame = new GameFrame(gamePanel);
         gamePanel.setFocusable(true);
         gamePanel.requestFocus();
+        SoundPlayer.load("gameover", "com/soft/andrew/resources/sounds/gameover.wav");
         initGameLoop();
     }
 
